@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>بنك أوامر قسم العلوم</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap">
+<style>
+:root{
+  --bg:#f3f7f7; --surface:#ffffff; --fg:#1d2a2c; --mute:#5b6b6d; --line:#d3e2e2;
+  --main:#0f5e63; --main-soft:#e3f0f0; --acc:#8a2846; --acc-soft:#f8eaf0; --slot:#fff4d6; --slot-fg:#7a5200;
+  --display:"Cairo",system-ui,"Segoe UI",Tahoma,sans-serif; --body:"Cairo",system-ui,"Segoe UI",Tahoma,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0e1819; --surface:#152325; --fg:#e4eeee; --mute:#9db0b1; --line:#27403f;
+  --main:#5fc4c4; --main-soft:#183334; --acc:#e48aa8; --acc-soft:#341c26; --slot:#3a2f12; --slot-fg:#f3cf7a; color-scheme:dark}}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.7;direction:rtl;margin:0}
+.wrap{max-width:900px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:24px 40px}
+header h1{font-family:var(--display);font-weight:800;font-size:clamp(26px,5vw,36px);line-height:1.3;margin:0;color:var(--main);text-wrap:balance}
+header p{margin:6px 0 0;color:var(--mute);max-width:62ch}
+.formula{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.formula span{background:var(--acc-soft);color:var(--acc);font-weight:700;font-size:13px;border-radius:999px;padding:2px 12px}
+.formula span b{font-weight:800}
+.fill{position:sticky;top:0;z-index:5;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:20px 0 14px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;box-shadow:0 6px 18px -14px rgba(0,0,0,.4)}
+.fill label{display:flex;flex-direction:column;gap:3px;font-size:12.5px;font-weight:700;color:var(--main);min-width:0}
+.fill input,.fill select{font:inherit;font-size:14px;font-weight:400;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:6px 10px;width:100%;min-width:0}
+.fill input:focus,.fill select:focus,.chip:focus-visible,.copy:focus-visible,#q:focus{outline:2px solid var(--main);outline-offset:1px}
+.fill .hint{grid-column:1/-1;font-size:12px;color:var(--mute);margin:0}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:18px}
+#q{font:inherit;font-size:14px;flex:1 1 220px;min-width:0;background:var(--surface);color:var(--fg);border:1px solid var(--line);border-radius:999px;padding:7px 16px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:13px;font-weight:700;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:999px;padding:4px 13px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--main);border-color:var(--main);color:var(--surface)}
+section.group{margin-top:22px}
+section.group>h2{font-family:var(--display);font-size:19px;font-weight:800;color:var(--acc);margin:0 0 10px;display:flex;align-items:baseline;gap:8px}
+section.group>h2 small{font-size:12.5px;font-weight:600;color:var(--mute)}
+.list{display:grid;gap:10px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;align-items:start}
+.card h3{margin:0;font-size:15.5px;font-weight:800;color:var(--main)}
+.card .use{grid-column:1/2;margin:0;font-size:13px;color:var(--mute)}
+.card .txt{grid-column:1/-1;margin:6px 0 0;background:var(--bg);border-radius:9px;padding:10px 12px;font-size:14.5px;line-height:1.85;white-space:pre-wrap;overflow-wrap:anywhere}
+.slot{background:var(--slot);color:var(--slot-fg);border-radius:5px;padding:0 4px;font-weight:700}
+.copy{grid-row:1/3;grid-column:2;font:inherit;font-size:13px;font-weight:700;border:0;border-radius:9px;background:var(--acc);color:#fff;padding:6px 14px;cursor:pointer;white-space:nowrap}
+.copy.done{background:var(--main)}
+.empty{color:var(--mute);text-align:center;padding:30px 0}
+.tips{margin-top:28px;background:var(--main-soft);border-radius:14px;padding:14px 18px}
+.tips h2{margin:0 0 6px;font-size:17px;color:var(--main)}
+.tips ul{margin:0;padding-right:20px}
+footer{margin-top:22px;font-size:11.5px;color:var(--mute);text-align:left}
+@media (max-width:560px){.fill{grid-template-columns:1fr 1fr}.fill label:first-child{grid-column:1/-1}.card{grid-template-columns:minmax(0,1fr)}.copy{grid-row:auto;grid-column:1;justify-self:start}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>بنك أوامر قسم العلوم</h1>
+    <p>أوامر جاهزة مكتوبة بالصيغة الخماسية. اكتبي المادة والصف والدرس مرة واحدة، فتُعبّأ في كل الأوامر، ثم انسخي الأمر والصقيه في أداة الذكاء الاصطناعي.</p>
+    <div class="formula"><span><b>الدور</b></span><span><b>المهمة</b></span><span><b>السياق</b></span><span><b>الشكل</b></span><span><b>القيود</b></span></div>
+  </header>
+  <div class="fill" role="group" aria-label="بيانات الدرس">
+    <label for="f-sub">المادة
+      <select id="f-sub">
+        <option value="">اختاري المادة</option>
+        <option>كيمياء</option><option>فيزياء</option><option>أحياء</option><option>علوم الأرض والفضاء</option><option>العلوم</option>
+      </select>
+    </label>
+    <label for="f-grade">الصف
+      <select id="f-grade">
+        <option value="">اختاري الصف</option>
+        <option>الأول الثانوي</option><option>الثاني الثانوي</option><option>الثالث الثانوي</option>
+        <option>الأول المتوسط</option><option>الثاني المتوسط</option><option>الثالث المتوسط</option>
+      </select>
+    </label>
+    <label for="f-lesson">الدرس
+      <input id="f-lesson" type="text" placeholder="مثال: الرابطة التساهمية">
+    </label>
+    <p class="hint">الخانات الصفراء في الأوامر تتغير حسب ما تكتبينه هنا. إذا تركتِ خانة فارغة تبقى بين قوسين لتكمليها بعد النسخ.</p>
+  </div>
+  <div class="tools">
+    <input id="q" type="search" placeholder="ابحثي في الأوامر…" aria-label="بحث">
+    <div class="chips" id="chips"></div>
+  </div>
+  <main id="bank"></main>
+  <div class="tips">
+    <h2>قبل استخدام الناتج</h2>
+    <ul>
+      <li>راجعي كل معلومة علمية ومعادلة ووحدة قياس قبل تقديمها للطالبات.</li>
+      <li>لا تكتبي أسماء الطالبات أو درجاتهن أو أي بيانات شخصية في أدوات الذكاء الاصطناعي.</li>
+      <li>لم تعجبك النتيجة؟ اطلبي التعديل في المحادثة نفسها: «اجعليها أسهل»، «اختصري»، «أضيفي أمثلة من الحياة».</li>
+      <li>أضيفي أوامرك الناجحة إلى البنك بإرسالها لمنسقة مجتمع التعلم المهني.</li>
+    </ul>
+  </div>
+  <footer>إعداد: أ. شيخة المطيري · مجتمع التعلم المهني · قسم العلوم</footer>
+</div>
+<script>
+const GROUPS=[
+ {id:"plan",name:"التخطيط للدرس",note:"خطط وأهداف وتهيئة"},
+ {id:"assess",name:"التقويم والأسئلة",note:"أسئلة متدرجة وبطاقات خروج"},
+ {id:"sheets",name:"أوراق العمل والأنشطة",note:"متمايزة وSTEM وتجارب"},
+ {id:"simplify",name:"تبسيط المفاهيم",note:"تشبيهات ومفاهيم خاطئة"},
+ {id:"diff",name:"الفروق الفردية",note:"علاج وإثراء"},
+ {id:"tech",name:"التقنية والوسائط",note:"ألعاب ومحاكاة وصور"},
+ {id:"review",name:"مراجعة الناتج",note:"تدقيق علمي وتربوي"}
+];
+const P=[
+ ["plan","خطة درس متكاملة","لإعداد تحضير درس كامل لحصة 50 دقيقة.",
+ "أنتِ معلمة {المادة} خبيرة في المنهج السعودي. أعدّي خطة درس لدرس «{الدرس}» لطالبات {الصف}، مدة الحصة 50 دقيقة. اعرضي الخطة في جدول يتضمن: الأهداف السلوكية، التهيئة، إجراءات الدرس مع الزمن، استراتيجيات التدريس، الأنشطة، التقويم البنائي والختامي، والواجب. اجعلي الأنشطة قابلة للتطبيق في فصل من 30 طالبة دون الحاجة إلى إنترنت."],
+ ["plan","أهداف سلوكية قابلة للقياس","لصياغة أهداف الدرس وفق مستويات بلوم.",
+ "أنتِ خبيرة في تصميم التعليم. اكتبي 6 أهداف سلوكية قابلة للقياس لدرس «{الدرس}» في مادة {المادة} لطالبات {الصف}، موزعة على مستويات بلوم من التذكر إلى الإبداع. اعرضيها في جدول من عمودين: الهدف، ومستواه. ابدئي كل هدف بفعل إجرائي واضح."],
+ ["plan","تهيئة مشوّقة","لبداية حصة تثير الفضول خلال 5 دقائق.",
+ "أنتِ معلمة {المادة} مبدعة. اقترحي 3 أفكار تهيئة لدرس «{الدرس}» لطالبات {الصف}، مدة كل منها لا تزيد عن 5 دقائق: سؤال مثير للتفكير، وموقف من الحياة اليومية، وعرض عملي بسيط بأدوات متوفرة. اكتبي لكل فكرة: ما تقوله المعلمة، والسؤال الذي تطرحه، والإجابة المتوقعة."],
+ ["assess","أسئلة اختيار من متعدد متدرجة","بنك أسئلة مع الإجابات والتفسير.",
+ "أنتِ معلمة {المادة} خبيرة في بناء الاختبارات. أعدّي 10 أسئلة اختيار من متعدد عن درس «{الدرس}» لطالبات {الصف} وفق المنهج السعودي، متدرجة من التذكر إلى التحليل (3 تذكر، 3 فهم، 2 تطبيق، 2 تحليل). لكل سؤال 4 بدائل، مع الإجابة الصحيحة وتفسير مختصر، ومستوى بلوم بين قوسين. استخدمي العربية الفصحى."],
+ ["assess","أسئلة بنمط نافس والتحصيلي","للتدريب على نمط الاختبارات الوطنية.",
+ "أنتِ خبيرة في إعداد أسئلة الاختبارات الوطنية (نافس والتحصيلي). صمّمي 8 أسئلة عن درس «{الدرس}» في مادة {المادة} لطالبات {الصف}، تقيس الفهم والتطبيق لا الحفظ، وبعضها مبني على شكل أو جدول أو موقف حياتي. لكل سؤال 4 بدائل مقنعة، مع الإجابة الصحيحة وسبب استبعاد كل بديل خاطئ."],
+ ["assess","صح وخطأ مع التصحيح","لكشف المفاهيم الخاطئة.",
+ "أنتِ معلمة {المادة}. اكتبي 10 عبارات صح وخطأ عن درس «{الدرس}» لطالبات {الصف}، نصفها خاطئ ويمثل مفاهيم خاطئة شائعة لدى الطالبات. اعرضيها في جدول: العبارة، الإجابة، وتصحيح العبارة الخاطئة."],
+ ["assess","أسئلة مقالية مع سلم تقدير","لتقويم مهارات التفسير والتعليل.",
+ "أنتِ معلمة {المادة} خبيرة في التقويم. اكتبي 4 أسئلة مقالية قصيرة عن درس «{الدرس}» لطالبات {الصف} تقيس التفسير والتعليل والمقارنة. لكل سؤال: الإجابة النموذجية، وسلم تقدير من 3 مستويات (كاملة، جزئية، غير صحيحة) مع الدرجة."],
+ ["assess","بطاقة خروج","تقويم ختامي سريع في آخر 5 دقائق.",
+ "أنتِ معلمة {المادة}. صمّمي بطاقة خروج لدرس «{الدرس}» لطالبات {الصف} تُحل في 5 دقائق، تتضمن: سؤالًا يقيس الهدف الرئيس، وسؤال تطبيق قصيرًا، وسؤالًا تكتب فيه الطالبة شيئًا لم يتضح لها. أضيفي الإجابات النموذجية في نهاية الرد."],
+ ["sheets","ورقة عمل متمايزة بثلاثة مستويات","ورقة واحدة تناسب مستويات الفصل كلها.",
+ "أنتِ معلمة {المادة} خبيرة في التعليم المتمايز. صمّمي ورقة عمل لدرس «{الدرس}» لطالبات {الصف} بثلاثة مستويات: المستوى الأول (أساسي) أسئلة مباشرة، والمستوى الثاني (متوسط) تطبيق، والمستوى الثالث (متقدم) تفكير عليا. ضعي في كل مستوى 3 أسئلة، وأضيفي ترويسة: الاسم، الصف، التاريخ. ثم اكتبي نموذج الإجابة منفصلًا."],
+ ["sheets","نشاط بمنحى STEM","نشاط جماعي يدمج العلوم والتقنية والهندسة والرياضيات.",
+ "أنتِ معلمة {المادة} متخصصة في منحى STEM. صمّمي نشاطًا جماعيًا لدرس «{الدرس}» لطالبات {الصف} مدته 20 دقيقة، مقسّمًا إلى أربعة أجزاء: العلوم (S)، والتقنية (T)، والهندسة (E)، والرياضيات (M). لكل جزء مهمة واضحة ومنتج متوقع، باستخدام أدوات بسيطة متوفرة في المدرسة."],
+ ["sheets","ورقة تجربة منزلية آمنة","تجربة بأدوات من البيت مع ملاحظة واستنتاج.",
+ "أنتِ معلمة {المادة}. صمّمي ورقة تجربة منزلية آمنة مرتبطة بدرس «{الدرس}» لطالبات {الصف}، بأدوات متوفرة في كل بيت. رتّبيها في أقسام: سؤال التجربة، الأدوات، خطوات مرقمة، أُلاحظ، أُفسّر، أستنتج، وسؤال تحدٍّ. أضيفي تنبيهات السلامة، ولا تقترحي أي مادة خطرة."],
+ ["sheets","نشاط تعاوني للمجموعات","مهام موزعة على مجموعات الفصل.",
+ "أنتِ معلمة {المادة}. صمّمي نشاطًا تعاونيًا لدرس «{الدرس}» لطالبات {الصف} لفصل من 30 طالبة مقسّم إلى 5 مجموعات. أعطي كل مجموعة مهمة مختلفة مرتبطة بجزء من الدرس، مع: المطلوب، والزمن (10 دقائق)، والمنتج الذي تعرضه المجموعة، وسؤالًا للنقاش بعد العرض."],
+ ["simplify","تشبيهات من الحياة اليومية","لتقريب المفاهيم المجردة.",
+ "أنتِ معلمة {المادة} تجيد التبسيط. اشرحي أبرز 3 مفاهيم في درس «{الدرس}» لطالبات {الصف} بتشبيهات من الحياة اليومية في البيئة السعودية. لكل مفهوم: التعريف العلمي في سطر، والتشبيه، وحدود التشبيه (أين لا ينطبق)."],
+ ["simplify","المفاهيم الخاطئة الشائعة","لتوقع أخطاء الطالبات وعلاجها.",
+ "أنتِ خبيرة في تعليم {المادة}. اذكري 5 مفاهيم خاطئة شائعة لدى طالبات {الصف} في درس «{الدرس}». اعرضيها في جدول: المفهوم الخاطئ، المفهوم الصحيح، سبب الخطأ، ونشاط قصير أو سؤال يساعد على تصحيحه."],
+ ["simplify","ملخص ومنظم تخطيطي","لمراجعة الدرس في صفحة واحدة.",
+ "أنتِ معلمة {المادة}. لخّصي درس «{الدرس}» لطالبات {الصف} في منظم تخطيطي نصي (خريطة مفاهيم): الفكرة الرئيسة في المنتصف، وتتفرع منها المفاهيم الفرعية مع تعريف مختصر ومثال لكل منها. اجعليه مناسبًا لتحويله إلى إنفوجرافيك."],
+ ["diff","خطة علاجية","لطالبات لم يتقنّ أهداف الدرس.",
+ "أنتِ معلمة {المادة} خبيرة في الخطط العلاجية. صمّمي خطة علاجية قصيرة لطالبات {الصف} اللاتي لم يتقنّ درس «{الدرس}»، تتضمن: المهارات المستهدفة، و3 أنشطة متدرجة من السهل إلى الأصعب، وأسلوب التقويم بعد العلاج. اجعلي التعليمات بسيطة وواضحة."],
+ ["diff","مهمة إثرائية","للطالبات المتميزات.",
+ "أنتِ معلمة {المادة}. صمّمي مهمة إثرائية لدرس «{الدرس}» للطالبات المتميزات في {الصف}، تربط الدرس بتطبيق حياتي أو تقني أو مهنة مرتبطة به. حددي: المطلوب، والمصادر المقترحة، والمنتج النهائي، ومعايير تقييمه."],
+ ["tech","لعبة تفاعلية تعمل بلا إنترنت","لعبة أسئلة في ملف HTML واحد للعرض في الفصل.",
+ "أنتِ مطوّرة ألعاب تعليمية. صمّمي لعبة أسئلة تفاعلية عن درس «{الدرس}» في مادة {المادة} لطالبات {الصف} في ملف HTML واحد يعمل على جهاز العرض بدون إنترنت. تتضمن 10 أسئلة اختيار من متعدد، وعدّاد نقاط، وتغذية راجعة فورية، وخطًا عربيًا واضحًا كبيرًا، وواجهة من اليمين إلى اليسار."],
+ ["tech","سيناريو فيديو تعليمي قصير","فيديو دقيقة واحدة يُولّد بأدوات الذكاء الاصطناعي.",
+ "أنتِ كاتبة سيناريو تعليمي. اكتبي سيناريو فيديو مدته دقيقة واحدة يقدّم درس «{الدرس}» في مادة {المادة} لطالبات {الصف}، مقسّمًا إلى 5 مشاهد. لكل مشهد: وصف بصري مفصّل يصلح لأداة توليد فيديو، والتعليق الصوتي بالعربية الفصحى، والمدة. اختمي بسؤال للطالبات."],
+ ["tech","أمر لتوليد صورة تعليمية","صورة توضيحية لشريحة أو ورقة عمل.",
+ "أنتِ مصممة رسوم تعليمية. اكتبي أمرًا باللغة الإنجليزية لأداة توليد الصور، لإنتاج رسم توضيحي علمي دقيق عن «{الدرس}» في مادة {المادة}، بأسلوب رسم تعليمي نظيف وخلفية بيضاء وألوان هادئة، بدون أي نص داخل الصورة. ثم اكتبي بالعربية الأسماء التي أضيفها على الصورة بعد توليدها."],
+ ["review","تدقيق علمي للناتج","الصقي الناتج بعد الأمر لمراجعته.",
+ "أنتِ مراجعة علمية متخصصة في {المادة} للمرحلة {الصف}. راجعي المحتوى التالي عن درس «{الدرس}» وحددي: الأخطاء العلمية، والمصطلحات التي تخالف مصطلحات الكتاب المدرسي السعودي، والمعلومات الأعلى من مستوى الطالبات. اعرضي الملاحظات في جدول: النص الأصلي، الملاحظة، التصحيح المقترح.\n\nالمحتوى:\n[الصقي المحتوى هنا]"],
+ ["review","تحسين أسئلة جاهزة","الصقي أسئلتك لتحسين صياغتها.",
+ "أنتِ خبيرة في بناء الاختبارات. راجعي الأسئلة التالية عن درس «{الدرس}» في مادة {المادة} لطالبات {الصف}: صحّحي الصياغة غير الواضحة، واجعلي البدائل الخاطئة مقنعة، وحددي مستوى بلوم لكل سؤال، واقترحي سؤالين لقياس مهارات التفكير العليا.\n\nالأسئلة:\n[الصقي الأسئلة هنا]"]
+];
+const $=s=>document.querySelector(s);
+const fields={المادة:$("#f-sub"),الصف:$("#f-grade"),الدرس:$("#f-lesson")};
+let active="all";
+function store(k,v){try{localStorage.setItem("pb-"+k,v)}catch(e){}}
+function load(k){try{return localStorage.getItem("pb-"+k)||""}catch(e){return""}}
+for(const [k,el] of Object.entries(fields)){el.value=load(k);el.addEventListener("input",()=>{store(k,el.value);render()})}
+function vals(){const o={};for(const [k,el] of Object.entries(fields))o[k]=el.value.trim();return o}
+function esc(s){return s.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]))}
+function plain(t,v){return t.replace(/\{(المادة|الصف|الدرس)\}/g,(m,k)=>v[k]||"["+k+"]")}
+function html(t,v){return esc(t).replace(/\{(المادة|الصف|الدرس)\}/g,(m,k)=>'<span class="slot">'+esc(v[k]||"["+k+"]")+"</span>").replace(/\[(الصقي[^\]]*)\]/g,'<span class="slot">[$1]</span>')}
+const chips=$("#chips");
+[{id:"all",name:"الكل"},...GROUPS].forEach(g=>{const b=document.createElement("button");b.className="chip";b.type="button";b.textContent=g.name;b.dataset.id=g.id;b.setAttribute("aria-pressed",g.id==="all");b.onclick=()=>{active=g.id;chips.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed",c.dataset.id===active));render()};chips.appendChild(b)});
+$("#q").addEventListener("input",render);
+function render(){
+  const v=vals(),q=$("#q").value.trim(),bank=$("#bank");bank.innerHTML="";let n=0;
+  GROUPS.forEach(g=>{
+    if(active!=="all"&&active!==g.id)return;
+    const items=P.filter(p=>p[0]===g.id&&(!q||(p[1]+p[2]+p[3]).includes(q)));
+    if(!items.length)return;
+    const s=document.createElement("section");s.className="group";
+    s.innerHTML='<h2>'+g.name+' <small>'+g.note+' · '+items.length+'</small></h2><div class="list"></div>';
+    const list=s.querySelector(".list");
+    items.forEach(p=>{n++;
+      const c=document.createElement("article");c.className="card";
+      c.innerHTML='<h3>'+esc(p[1])+'</h3><button class="copy" type="button">نسخ الأمر</button><p class="use">'+esc(p[2])+'</p><p class="txt">'+html(p[3],v)+'</p>';
+      const btn=c.querySelector(".copy");
+      btn.onclick=()=>{const t=plain(p[3],v);const ok=()=>{btn.textContent="تم النسخ";btn.classList.add("done");setTimeout(()=>{btn.textContent="نسخ الأمر";btn.classList.remove("done")},1600)};
+        const sel=()=>{const r=document.createRange();r.selectNodeContents(c.querySelector(".txt"));const s=getSelection();s.removeAllRanges();s.addRange(r);btn.textContent="حدّدنا النص، انسخيه";};
+        try{navigator.clipboard.writeText(t).then(ok,sel)}catch(e){sel()}};
+      list.appendChild(c)});
+    bank.appendChild(s)});
+  if(!n)bank.innerHTML='<p class="empty">لا توجد أوامر مطابقة. جرّبي كلمة أخرى أو اختاري «الكل».</p>';
+}
+render();
+</script>
+</body>
+</html>
